@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawing Room & Lobby - Paint Color Options</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f0; color: #333; }
+header { background: #2c2c2c; color: white; padding: 24px 20px; text-align: center; }
+header h1 { font-size: 1.6rem; font-weight: 500; }
+header p { opacity: 0.8; margin-top: 6px; font-size: 0.95rem; }
+.palette { display: flex; justify-content: center; gap: 16px; padding: 20px; flex-wrap: wrap; background: white; border-bottom: 1px solid #eee; }
+.swatch { width: 80px; height: 80px; border-radius: 12px; cursor: pointer; border: 3px solid transparent; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.swatch:hover, .swatch.active { border-color: #333; transform: scale(1.05); }
+.swatch-label { text-align: center; font-size: 0.75rem; margin-top: 6px; color: #555; }
+.tabs { display: flex; justify-content: center; gap: 8px; padding: 16px; flex-wrap: wrap; background: white; }
+.tab { padding: 10px 18px; border: none; background: #eee; border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+.tab.active { background: #2c2c2c; color: white; }
+.gallery { display: none; padding: 20px; max-width: 1200px; margin: 0 auto; }
+.gallery.active { display: block; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.card img { width: 100%; height: auto; display: block; }
+.card .label { padding: 12px; text-align: center; font-size: 0.9rem; color: #444; font-weight: 500; }
+.note { text-align: center; padding: 20px; color: #666; font-size: 0.9rem; }
+a { color: #2c2c2c; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Drawing Room & Lobby — Paint Colour Options</h1>
+  <p>Asian Paints warm neutrals · All walls same colour · No accent walls</p>
+</header>
+
+<div class="palette" id="palette"></div>
+<div class="tabs" id="tabs"></div>
+<div id="content"></div>
+<div class="note">
+  Images show your actual rooms with walls repainted. Floor, columns, arch, niches, and windows remain original.<br>
+  Share this page with family to decide. We can add a new tab later for the final chosen colour.
+</div>
+
+<script>
+const colors = {
+  "Pure Ivory": {
+    "drawing-room-1": "pure-ivory-dr1.jpg",
+    "drawing-room-2": "pure-ivory-dr2.jpg",
+    "lobby-1": "pure-ivory-l1.jpg",
+    "lobby-2": "pure-ivory-l2.jpg"
+  },
+  "Desert Ivory": {
+    "drawing-room-1": "desert-ivory-dr1.jpg",
+    "drawing-room-2": "desert-ivory-dr2.jpg",
+    "lobby-1": "desert-ivory-l1.jpg",
+    "lobby-2": "desert-ivory-l2.jpg"
+  },
+  "Cold Coffee / Luxurious": {
+    "drawing-room-1": "cold-coffee-dr1.jpg",
+    "drawing-room-2": "cold-coffee-dr2.jpg",
+    "lobby-1": "cold-coffee-l1.jpg",
+    "lobby-2": "cold-coffee-l2.jpg"
+  },
+  "Slightly Darker Greige": {
+    "drawing-room-1": "darker-greige-dr1.jpg",
+    "drawing-room-2": "darker-greige-dr2.jpg",
+    "lobby-1": "darker-greige-l1.jpg",
+    "lobby-2": "darker-greige-l2.jpg"
+  }
+};
+
+const colorHex = {
+  "Pure Ivory": "#F5F0E6",
+  "Desert Ivory": "#E8D9C4",
+  "Cold Coffee / Luxurious": "#D4C4B0",
+  "Slightly Darker Greige": "#C4B5A0"
+};
+
+const palette = document.getElementById("palette");
+const tabs = document.getElementById("tabs");
+const content = document.getElementById("content");
+
+Object.keys(colors).forEach((name, i) => {
+  const sw = document.createElement("div");
+  sw.style.textAlign = "center";
+  sw.innerHTML = `<div class="swatch" style="background:${colorHex[name]}" data-color="${name}"></div><div class="swatch-label">${name}</div>`;
+  palette.appendChild(sw);
+
+  const tab = document.createElement("button");
+  tab.className = "tab" + (i === 0 ? " active" : "");
+  tab.textContent = name;
+  tab.dataset.color = name;
+  tabs.appendChild(tab);
+
+  const gal = document.createElement("div");
+  gal.className = "gallery" + (i === 0 ? " active" : "");
+  gal.dataset.color = name;
+  gal.innerHTML = `<div class="grid">
+    <div class="card"><img src="${colors[name]["drawing-room-1"]}"><div class="label">Drawing Room — Angle 1</div></div>
+    <div class="card"><img src="${colors[name]["drawing-room-2"]}"><div class="label">Drawing Room — Angle 2</div></div>
+    <div class="card"><img src="${colors[name]["lobby-1"]}"><div class="label">Lobby — Angle 1</div></div>
+    <div class="card"><img src="${colors[name]["lobby-2"]}"><div class="label">Lobby — Angle 2</div></div>
+  </div>`;
+  content.appendChild(gal);
+});
+
+function activate(name) {
+  document.querySelectorAll(".tab, .gallery, .swatch").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(`[data-color="${name}"]`).forEach(el => {
+    if (el.classList.contains("tab") || el.classList.contains("gallery") || el.classList.contains("swatch")) {
+      el.classList.add("active");
+    }
+  });
+}
+
+document.querySelectorAll(".tab, .swatch").forEach(el => {
+  el.addEventListener("click", () => activate(el.dataset.color));
+});
+</script>
+</body>
+</html>
